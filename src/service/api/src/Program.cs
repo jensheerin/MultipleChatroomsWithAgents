@@ -42,12 +42,12 @@ var kernelBuilder = Kernel.CreateBuilder();
 
 // Initialize KernelHandler
 
-//KernelHelper.SetupAzure(kernelBuilder, configuration);
-KernelHelper.SetupOllama(kernelBuilder, configuration);
+KernelHelper.SetupAzure(kernelBuilder, configuration);
+//KernelHelper.SetupOllama(kernelBuilder, configuration);
 
-KernelHelper.SetupQdrant(kernelBuilder, configuration);
+//KernelHelper.SetupQdrant(kernelBuilder, configuration);
 //KernelHelper.SetupPinecone(kernelBuilder, configuration);
-//KernelHelper.SetupAzureSearch(kernelBuilder, configuration);
+KernelHelper.SetupAzureSearch(kernelBuilder, configuration);
 // Build the kernel.
 var kernel = kernelBuilder.Build();
 
