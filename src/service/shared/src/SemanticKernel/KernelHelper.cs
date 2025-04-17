@@ -37,6 +37,10 @@ namespace MultiAgents.SemanticKernel
             var endpoint = configuration["AZURE_OPENAI_ENDPOINT"];
             var deploymentName = configuration["AZURE_OPENAI_DEPLOYMENT"];
 
+            // Add Azure Cognitive Search settings so they can be used below
+            var azureSearchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"];
+            var azureSearchKey = configuration["AZURE_SEARCH_KEY"];
+
             kernelBuilder.AddAzureOpenAIChatCompletion(deploymentName, apiKey, endpoint);
             kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(deploymentName, endpoint, apiKey);
             
@@ -150,8 +154,8 @@ namespace MultiAgents.SemanticKernel
         public static void SetupAzureSearch(IKernelBuilder builder, IConfiguration configuration)
         {
             // Retrieve the Azure Cognitive Search endpoint, key, and index name from the configuration.
-            var azureSearchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"] ?? ["AZURE_SEARCH_ENDPOINT"];
-            var azureSearchKey = configuration["AZURE_SEARCH_KEY"] ?? ["AZURE_SEARCH_KEY"];
+            var azureSearchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"] ?? "AZURE_SEARCH_ENDPOINT";
+            var azureSearchKey = configuration["AZURE_SEARCH_KEY"] ?? "AZURE_SEARCH_KEY";
             var indexName = configuration["AZURE_SEARCH_INDEX"] ?? "pdf-docs";
             var endpoint = new Uri(azureSearchEndpoint);
             var cred = new AzureKeyCredential(azureSearchKey);
