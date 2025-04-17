@@ -150,7 +150,7 @@ namespace MultiAgents.SemanticKernel
         public static void SetupAzureSearch(IKernelBuilder builder, IConfiguration configuration)
         {
             // Retrieve the Azure Cognitive Search endpoint, key, and index name from the configuration.
-            var azureSearchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"] ?? "["AZURE_SEARCH_ENDPOINT"];
+            var azureSearchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"] ?? ["AZURE_SEARCH_ENDPOINT"];
             var azureSearchKey = configuration["AZURE_SEARCH_KEY"] ?? ["AZURE_SEARCH_KEY"];
             var indexName = configuration["AZURE_SEARCH_INDEX"] ?? "pdf-docs";
             var endpoint = new Uri(azureSearchEndpoint);
