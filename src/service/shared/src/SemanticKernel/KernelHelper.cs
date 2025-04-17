@@ -101,7 +101,7 @@ namespace MultiAgents.SemanticKernel
             // This enables the kernel to generate text embeddings using the Ollama service.
            // kernelBuilder.AddOllamaTextEmbeddingGeneration(modelId, ollamaUri);
 //#pragma warning restore SKEXP0070
-        }
+        //}
 
             /// <summary>
             /// Configures the kernel to use the Pinecone vector store.
@@ -140,7 +140,7 @@ namespace MultiAgents.SemanticKernel
 
             // Register the DataUploader as a singleton service for uploading data to the vector store.
             //builder.Services.AddSingleton<DataUploader>();
-        /}
+        //}
 
         /// <summary>
         /// Configures the kernel to use the Azure Cognitive Search vector store.
