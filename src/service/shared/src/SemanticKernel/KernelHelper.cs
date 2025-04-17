@@ -1,7 +1,6 @@
 // Import necessary namespaces for document handling, Azure services, dependency injection, and Semantic Kernel connectivity.
  
 using Azure;
-using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
@@ -45,17 +44,17 @@ namespace MultiAgents.SemanticKernel
             var endpointUri = new Uri(endpoint);
             var credential = new DefaultAzureCredential();
 
-            // Register Azure OpenAI services using TokenCredential
+            // Register Azure OpenAI services using API key and endpoint strings
             kernelBuilder.AddAzureOpenAIChatCompletion(
                 deploymentName: deploymentName,
-                credential: credential,
-                endpoint: endpointUri
+                apiKey: configuration["AZURE_OPENAI_API_KEY"],
+                endpoint: configuration["AZURE_OPENAI_ENDPOINT"]
             );
 #pragma warning disable SKEXP0010
             kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
                 deploymentName: deploymentName,
-                credential: credential,
-                endpoint: endpointUri
+                apiKey: configuration["AZURE_OPENAI_API_KEY"],
+                endpoint: configuration["AZURE_OPENAI_ENDPOINT"]
             );
 #pragma warning restore SKEXP0010
 
