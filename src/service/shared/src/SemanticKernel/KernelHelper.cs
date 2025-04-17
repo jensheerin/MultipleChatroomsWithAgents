@@ -1,7 +1,7 @@
 // Import necessary namespaces for document handling, Azure services, dependency injection, and Semantic Kernel connectivity.
  
 using Azure;
- 
+using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
@@ -30,54 +30,42 @@ namespace MultiAgents.SemanticKernel
         /// <exception cref="InvalidOperationException">Thrown if any required Azure OpenAI environment variables are not set.</exception>
         static public void SetupAzure(IKernelBuilder kernelBuilder, IConfiguration configuration)
         {
-            //this is the embedding size for and we can use this to make other lives easier
             EmbeddingDimension = 1536;
-            // Retrieve Azure OpenAI configuration settings from the configuration object.
-            var apiKey = configuration["AZURE_OPENAI_API_KEY"];
+            // Retrieve Azure OpenAI configuration settings
             var endpoint = configuration["AZURE_OPENAI_ENDPOINT"];
             var deploymentName = configuration["AZURE_OPENAI_DEPLOYMENT"];
 
-            // Add Azure Cognitive Search settings so they can be used below
-            var azureSearchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"];
-            var azureSearchKey = configuration["AZURE_SEARCH_KEY"];
-
-            kernelBuilder.AddAzureOpenAIChatCompletion(deploymentName, apiKey, endpoint);
-            // Suppress SKEXP0010 warning for evaluation-only API
-#pragma warning disable SKEXP0010
-            kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(deploymentName, endpoint, apiKey);
-#pragma warning restore SKEXP0010
-
-            // Validate that the required Azure OpenAI settings are provided.
-            if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(deploymentName))
+            // Validate required settings
+            if (string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(deploymentName))
             {
-                // Throw an exception if any required environment variables are missing.
-                throw new InvalidOperationException("Azure OpenAI environment variables are not set.");
+                throw new InvalidOperationException("Azure OpenAI endpoint or deployment name is not set.");
             }
 
-            // Add Azure OpenAI Chat Completion service to the kernel using the provided deployment name, API key, and endpoint.
+            // Use managed identity for authentication
+            var endpointUri = new Uri(endpoint);
+            var credential = new DefaultAzureCredential();
+
+            // Register Azure OpenAI services using TokenCredential
             kernelBuilder.AddAzureOpenAIChatCompletion(
                 deploymentName: deploymentName,
-                apiKey: apiKey,
-                endpoint: endpoint
+                credential: credential,
+                endpoint: endpointUri
             );
-
-            // If Azure Cognitive Search configuration is available, then add the corresponding services.
-            if (!(string.IsNullOrEmpty(azureSearchEndpoint) || string.IsNullOrEmpty(azureSearchKey)))
-            {
-                // Add Azure OpenAI Text Embedding Generation service to the kernel.
 #pragma warning disable SKEXP0010
-                kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
-                    deploymentName: deploymentName,
-                    endpoint: endpoint,
-                    apiKey: apiKey
-                );
+            kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
+                deploymentName: deploymentName,
+                credential: credential,
+                endpoint: endpointUri
+            );
 #pragma warning restore SKEXP0010
 
-                // Add Azure Cognitive Search vector store to the kernel.
-                kernelBuilder.AddAzureAISearchVectorStore(
-                    new Uri(azureSearchEndpoint),
-                    new Azure.AzureKeyCredential(azureSearchKey)
-                );
+            // Optional: configure Azure Cognitive Search if endpoint provided
+            var searchEndpoint = configuration["AZURE_SEARCH_ENDPOINT"];
+            if (!string.IsNullOrEmpty(searchEndpoint))
+            {
+                var searchUri = new Uri(searchEndpoint);
+                var searchCredential = new DefaultAzureCredential();
+                kernelBuilder.AddAzureAISearchVectorStore(searchUri, searchCredential);
             }
         }
 
