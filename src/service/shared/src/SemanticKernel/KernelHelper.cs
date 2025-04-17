@@ -1,6 +1,8 @@
 // Import necessary namespaces for document handling, Azure services, dependency injection, and Semantic Kernel connectivity.
  
 using Azure;
+using Azure.Identity;
+using Azure.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
