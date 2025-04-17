@@ -42,8 +42,11 @@ namespace MultiAgents.SemanticKernel
             var azureSearchKey = configuration["AZURE_SEARCH_KEY"];
 
             kernelBuilder.AddAzureOpenAIChatCompletion(deploymentName, apiKey, endpoint);
+            // Suppress SKEXP0010 warning for evaluation-only API
+#pragma warning disable SKEXP0010
             kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(deploymentName, endpoint, apiKey);
-            
+#pragma warning restore SKEXP0010
+
             // Validate that the required Azure OpenAI settings are provided.
             if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(endpoint) || string.IsNullOrEmpty(deploymentName))
             {
@@ -61,8 +64,8 @@ namespace MultiAgents.SemanticKernel
             // If Azure Cognitive Search configuration is available, then add the corresponding services.
             if (!(string.IsNullOrEmpty(azureSearchEndpoint) || string.IsNullOrEmpty(azureSearchKey)))
             {
-#pragma warning disable SKEXP0010
                 // Add Azure OpenAI Text Embedding Generation service to the kernel.
+#pragma warning disable SKEXP0010
                 kernelBuilder.AddAzureOpenAITextEmbeddingGeneration(
                     deploymentName: deploymentName,
                     endpoint: endpoint,
